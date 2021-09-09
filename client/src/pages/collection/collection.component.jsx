@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 
 import CollectionItem from '../../components/collection-item/collection-item.component';
@@ -9,17 +9,61 @@ import {
   CollectionPageContainer,
   CollectionTitle,
   CollectionItemsContainer,
+  CollectionHeader,
+  CollectionSortButtonContainer,
 } from './collection.styles';
 
 const CollectionPage = ({ collection }) => {
   const { title, items } = collection;
+
+  const [data, setData] = useState([]);
+  const [sortType, setSortType] = useState('name');
+
+  useEffect(() => {
+    const sortCollection = (type) => {
+      const types = {
+        name: 'name',
+        priceAscending: 'price',
+        priceDescending: 'price',
+      };
+
+      const sortProperty = type;
+      const sortPropertyString = types[type];
+
+      if (sortProperty === 'priceDescending') {
+        setData(
+          [...items].sort(
+            (a, b) => b[sortPropertyString] - a[sortPropertyString]
+          )
+        );
+      } else {
+        setData(
+          [...items].sort(
+            (a, b) => a[sortPropertyString] - b[sortPropertyString]
+          )
+        );
+      }
+    };
+
+    sortCollection(sortType);
+  }, [items, sortType]);
+
   return (
     <CollectionPageContainer>
-      <CollectionTitle>{title}</CollectionTitle>
+      <CollectionHeader>
+        <CollectionTitle>{title}</CollectionTitle>
+        <CollectionSortButtonContainer>
+          <select onChange={(e) => setSortType(e.target.value)}>
+            <option value='name'>Name</option>
+            <option value='priceAscending'>Price low to high</option>
+            <option value='priceDescending'>Price high to low</option>
+          </select>
+        </CollectionSortButtonContainer>
+      </CollectionHeader>
       <CollectionItemsContainer>
-        {items.map((item) => (
-          <CollectionItem key={item.id} item={item} />
-        ))}
+        {data.map((item) => {
+          return <CollectionItem key={item.id} item={item} />;
+        })}
       </CollectionItemsContainer>
     </CollectionPageContainer>
   );
