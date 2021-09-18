@@ -70,11 +70,8 @@ export function* isUserAuthenticated() {
 }
 
 export function* signUp({ payload: { email, password, displayName } }) {
-  console.log('got here');
   try {
-    console.log('got here 2');
     const { user } = yield auth.createUserWithEmailAndPassword(email, password);
-    console.log('got here 3');
     yield put(signUpSuccess({ user, additionalData: { displayName } }));
   } catch (error) {
     yield put(signUpFailure(error));
