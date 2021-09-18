@@ -9,6 +9,7 @@ import {
   selectCartItems,
   selectCartTotal,
 } from '../../redux/cart/cart.selectors';
+import { selectCurrentUser } from '../../redux/user/user.selectors';
 
 import {
   CheckoutPageContainer,
@@ -18,7 +19,7 @@ import {
   WarningContainer,
 } from './checkout.styles';
 
-const CheckoutPage = ({ cartItems, total }) => (
+const CheckoutPage = ({ cartItems, total, currentUser }) => (
   <CheckoutPageContainer>
     <CheckoutHeaderContainer>
       <HeaderBlockContainer>
@@ -51,14 +52,26 @@ const CheckoutPage = ({ cartItems, total }) => (
       <a href='https://stripe.com/docs/testing#cards'>
         Click here for more info
       </a>
+      <br />
+      ***This Stripe checkout is in the process of being upgraded from the
+      legacy version.***
+      <br />
+      ***Stripe's legacy checkout does not pass a shipping address in its token
+      meaning it cannot be retrieved from the payment. For now, "orders" will be
+      saved using the user's billing address.***
     </WarningContainer>
-    <StripeCheckoutButton price={total} />
+    <StripeCheckoutButton
+      price={total}
+      cartItems={cartItems}
+      currentUser={currentUser}
+    />
   </CheckoutPageContainer>
 );
 
 const mapStateToProps = createStructuredSelector({
   cartItems: selectCartItems,
   total: selectCartTotal,
+  currentUser: selectCurrentUser,
 });
 
 export default connect(mapStateToProps)(CheckoutPage);

@@ -2,7 +2,7 @@ import React from 'react';
 import StripeCheckout from 'react-stripe-checkout';
 import axios from 'axios';
 
-const StripeCheckoutButton = ({ price }) => {
+const StripeCheckoutButton = ({ price, cartItems, currentUser }) => {
   const priceForStripe = price * 100;
   const publishableKey =
     'pk_test_51JTqP7FBtZD9tTiaNIyMnssb2H0r47UiFxPYQDx7IG7621Yhtgvhk4XuyXFlEnaAvZSgOewGOLXuJT89Ym9MD85k00RglCKIcQ';
@@ -16,14 +16,26 @@ const StripeCheckoutButton = ({ price }) => {
         token,
       },
     })
-      .then((response) => {
+      .then(() => {
         alert('Payment successful!');
       })
+      .then(() => {
+        if (currentUser) {
+          axios({
+            url: 'users',
+            method: 'post',
+            data: {
+              firestoreId: currentUser.id,
+              orderedItems: cartItems,
+              price,
+              token,
+            },
+          });
+        }
+      })
       .catch((error) => {
-        console.log('Payment error: ', JSON.parse(error));
-        alert(
-          'There was an issue with your payment. Please make sure you use the provided test credit card.'
-        );
+        console.log('Error: ', JSON.parse(error));
+        alert('Sorry, there was an issue placing this order.');
       });
   };
 

@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+const mongoose = require('mongoose');
 const { urlencoded } = require('body-parser');
 
 if (process.env.NODE_ENV !== 'production') require('dotenv').config();
@@ -19,6 +20,14 @@ if (process.env.NODE_ENV === 'production') {
     res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
   });
 }
+
+mongoose.connect(process.env.DATABASE_URL);
+const db = mongoose.connection;
+db.on('error', (error) => console.error(error));
+db.once('open', () => console.log('Connected to database...'));
+
+const usersRouter = require('./routes/users');
+app.use('/users', usersRouter);
 
 app.listen(port, (error) => {
   if (error) throw error;
