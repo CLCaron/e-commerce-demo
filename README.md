@@ -1,15 +1,8 @@
-# E-Commerce Demo
-## [Click here to check out the site](https://chris-caron-ecommerce-demo.herokuapp.com/)
-
 # What is it?
-This is a an e-commerce demo website where a user can register an account (or sign in with Google), add items to their cart, and "pay" for the items in checkout. There are no real monetary transactions taking place as the checkout is completed using a test credit card number for Stripe.
+This is a an e-commerce demo website where a user can register an account (or sign in with Google), add items to their cart, and "pay" for the items in checkout. There are no real monetary transactions taking place, as the checkout is completed using a test credit card number for Stripe.
 
 # How was it made?
-This website was built using React and Node.js. It is currently utilizing Redux and Redux-Sagas. Firebase is used to handle user logins via e-mail address or sign-in with Google and store their account information. A backend has been built using express which is currently only used for Stripe payment transactions. Other modern libraries were used and a full list can be found at the bottom of this ReadMe.
-
-# Images:
-![homepage image](https://imgur.com/78UPZvX.jpeg)
-![checkout image](https://imgur.com/hMPltr9.jpeg)
+This website was built using React and Node.js. Firebase is used to handle user logins via e-mail address or sign-in with Google and store their account information. A backend has been built using Express which is currently only used for Stripe payment transactions. MongoDB is used for storing "orders" for a user's account. Other modern libraries were used and a full list can be found below.
 
 # Libraries and technologies used:
 **[Axios](https://axios-http.com/)**: "A promise based HTTP client for the browser and node.js"
