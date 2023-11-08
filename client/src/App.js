@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Switch, Route, Redirect } from 'react-router-dom';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 
@@ -16,6 +16,8 @@ import { selectCurrentUser } from './redux/user/user.selectors';
 import { checkUserSession } from './redux/user/user.actions';
 
 const App = ({ checkUserSession, currentUser }) => {
+  const navigate = useNavigate();
+
   useEffect(() => {
     checkUserSession();
   }, [checkUserSession]);
@@ -24,19 +26,26 @@ const App = ({ checkUserSession, currentUser }) => {
     <div>
       <GlobalStyle />
       <Header />
-      <Switch>
-        <Route exact path='/' component={HomePage} />
-        <Route path='/shop' component={ShopPage} />
-        <Route exact path='/checkout' component={CheckoutPage} />
-        <Route exact path='/orders' component={OrdersPage} />
+      <Routes>
+        <Route path='/' element={<HomePage />} />
+        <Route path='/shop/*' element={<ShopPage />} />
+        <Route path='/checkout' element={<CheckoutPage />} />
+        <Route path='/orders' element={<OrdersPage />} />
         <Route
           exact
           path='/signin'
-          render={() =>
-            currentUser ? <Redirect to='/' /> : <SignInAndSignUpPage />
+          element={
+            currentUser ? (
+              () => {
+                navigate('/');
+                return null;
+              }
+            ) : (
+              <SignInAndSignUpPage />
+            )
           }
         />
-      </Switch>
+      </Routes>
     </div>
   );
 };
