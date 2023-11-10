@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import Order from '../../components/order/order.component';
 import { OrdersPageContainer } from './orders.styles';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { selectCurrentUser } from '../../redux/user/user.selectors';
-import { createStructuredSelector } from 'reselect';
 import axios from 'axios';
 
-const OrdersPage = ({ currentUser }) => {
+const OrdersPage = () => {
+  const currentUser = useSelector((state) =>
+    selectCurrentUser(state)
+  );
+
   const [orders, setOrders] = useState([]);
+
   useEffect(() => {
     if (currentUser !== null) {
       axios(`/users/${currentUser.id}/orders`).then((res) => {
@@ -29,8 +33,4 @@ const OrdersPage = ({ currentUser }) => {
   );
 };
 
-const mapStateToProps = createStructuredSelector({
-  currentUser: selectCurrentUser,
-});
-
-export default connect(mapStateToProps)(OrdersPage);
+export default OrdersPage;

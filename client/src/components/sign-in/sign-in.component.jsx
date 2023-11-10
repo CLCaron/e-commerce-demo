@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { connect } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 
 import FormInput from '../form-input/form-input.component';
 import CustomButton from '../custom-button/custom-button.component';
@@ -15,18 +16,34 @@ import {
   ButtonsBarContainer,
 } from './sign-in.styles';
 
-const SignIn = ({ emailSignInStart, googleSignInStart }) => {
+const SignIn = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const currentUser = useSelector((state) => state.user.currentUser);
+
   const [userCredentials, setCredentials] = useState({
     email: '',
     password: '',
   });
+  
+  // FIXME: We need to redirect to the homepage after signing in. Currently, this is bugged and not working as intended.
+  useEffect(() => {
+    if (currentUser) {
+      navigate('/');
+    }
+  }, [currentUser, navigate]);
 
   const { email, password } = userCredentials;
+
+  const handleEmailSignInStart = (email, password) =>
+    dispatch(emailSignInStart({ email, password }));
+  const handleGoogleSignInStart = () => dispatch(googleSignInStart());
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    emailSignInStart(email, password);
+    
+    handleEmailSignInStart(email, password);
   };
 
   const handleChange = (event) => {
@@ -35,10 +52,13 @@ const SignIn = ({ emailSignInStart, googleSignInStart }) => {
     setCredentials({ ...userCredentials, [name]: value });
   };
 
+  // TODO: We should have an error for the user if their password is incorrect or if their email is not found.
   return (
     <SignInContainer>
       <SignInTitle>I already have an account</SignInTitle>
       <span>Sign in with your e-mail and password</span>
+
+      
 
       <form onSubmit={handleSubmit}>
         <FormInput
@@ -64,7 +84,7 @@ const SignIn = ({ emailSignInStart, googleSignInStart }) => {
 
           <CustomButton
             type='button'
-            onClick={googleSignInStart}
+            onClick={handleGoogleSignInStart}
             isGoogleSignIn
           >
             {' '}
@@ -76,10 +96,4 @@ const SignIn = ({ emailSignInStart, googleSignInStart }) => {
   );
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  googleSignInStart: () => dispatch(googleSignInStart()),
-  emailSignInStart: (email, password) =>
-    dispatch(emailSignInStart({ email, password })),
-});
-
-export default connect(null, mapDispatchToProps)(SignIn);
+export default SignIn;

@@ -15,6 +15,7 @@ import { getDoc } from 'firebase/firestore';
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  signOut as signOutFirebase
 } from 'firebase/auth';
 import {
   auth,
@@ -39,7 +40,7 @@ export function* getSnapshotFromUserAuth(userAuth, additionalData) {
 
 export function* signOut() {
   try {
-    yield signOut(auth);
+    yield call(signOutFirebase, auth);
     yield put(signOutSuccess());
   } catch (error) {
     yield put(signOutFailure(error));

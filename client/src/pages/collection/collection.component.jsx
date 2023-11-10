@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
+import { useParams } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 import CollectionItem from '../../components/collection-item/collection-item.component';
 
@@ -13,8 +14,11 @@ import {
   CollectionSortButtonContainer,
 } from './collection.styles';
 
-const CollectionPage = ({ collection }) => {
-  const { title, items } = collection;
+const CollectionPage = () => {
+  const { collectionId } = useParams();
+  const collection = useSelector((state) =>
+    selectCollection(collectionId)(state)
+  );
 
   const [data, setData] = useState([]);
   const [sortType, setSortType] = useState('name');
@@ -30,15 +34,16 @@ const CollectionPage = ({ collection }) => {
       const sortProperty = type;
       const sortPropertyString = types[type];
 
+      // FIXME: Sorting currently doesn't actually handle sorting by name, it just resets the sort to the default sort. Also, consider a better way to handle sorting?
       if (sortProperty === 'priceDescending') {
         setData(
-          [...items].sort(
+          [...collection.items].sort(
             (a, b) => b[sortPropertyString] - a[sortPropertyString]
           )
         );
       } else {
         setData(
-          [...items].sort(
+          [...collection.items].sort(
             (a, b) => a[sortPropertyString] - b[sortPropertyString]
           )
         );
@@ -46,12 +51,12 @@ const CollectionPage = ({ collection }) => {
     };
 
     sortCollection(sortType);
-  }, [items, sortType]);
+  }, [collection.items, sortType]);
 
   return (
     <CollectionPageContainer>
       <CollectionHeader>
-        <CollectionTitle>{title}</CollectionTitle>
+        <CollectionTitle>{collection.title}</CollectionTitle>
         <CollectionSortButtonContainer>
           <select onChange={(e) => setSortType(e.target.value)}>
             <option value='name'>Name</option>
@@ -69,8 +74,4 @@ const CollectionPage = ({ collection }) => {
   );
 };
 
-const mapStateToProps = (state, ownProps) => ({
-  collection: selectCollection(ownProps.match.params.collectionId)(state),
-});
-
-export default connect(mapStateToProps)(CollectionPage);
+export default CollectionPage;

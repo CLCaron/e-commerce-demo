@@ -2,6 +2,7 @@ import React from 'react';
 import StripeCheckout from 'react-stripe-checkout';
 import axios from 'axios';
 
+// TODO: Migrate to the modern Stripe API
 const StripeCheckoutButton = ({ price, cartItems, currentUser }) => {
   const priceForStripe = price * 100;
   const publishableKey =
